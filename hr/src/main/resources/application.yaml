@@ -1,0 +1,24 @@
+spring:
+  profiles:
+    active: smart
+hr:
+  payraise:
+    default_percent: '5'
+    smart_ranges[0]:
+      percent: '5'
+      months_of_term: '0'
+      years_of_term: '5'
+    smart_ranges[1]:
+      years_of_term: '10'
+      months_of_term: '0'
+      percent: '20'
+    smart_ranges[2]:
+      percent: '2'
+      years_of_term: '2'
+      months_of_term: '6'
+    smart_ranges[3]:
+      months_of_term: '0'
+      percent: '1'
+      years_of_term: '1'
+    
+    
