@@ -1,7 +1,6 @@
 package hu.webuni.hr.orsmolnar;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -16,9 +15,7 @@ public class HrApplication implements CommandLineRunner{
 
 	@Autowired
 	SalaryService salaryService;
-	
-	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-	
+
 	Employee employee1 = new Employee((long) 1, "Joe", 1000, LocalDate.parse("2010-01-02"));
 	Employee employee2 = new Employee((long) 2, "Jane", 1000, LocalDate.parse("2015-01-02"));
 	Employee employee3 = new Employee((long) 3, "Mary", 1000, LocalDate.parse("2018-06-15"));
