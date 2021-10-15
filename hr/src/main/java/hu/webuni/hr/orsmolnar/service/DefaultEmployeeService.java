@@ -13,7 +13,7 @@ public class DefaultEmployeeService implements EmployeeService{
 	HrConfigProperties configProperties;
 	
 	@Override
-	public int getPayRaisePercent(Employee employee) {
+	public double getPayRaisePercent(Employee employee) {
 		
 		return configProperties.getPayraise().getDefaultPercent();
 	}

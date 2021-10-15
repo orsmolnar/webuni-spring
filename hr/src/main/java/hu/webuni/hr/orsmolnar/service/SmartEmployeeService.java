@@ -1,7 +1,7 @@
 package hu.webuni.hr.orsmolnar.service;
 
 import java.time.LocalDate;
-import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,24 +21,23 @@ public class SmartEmployeeService implements EmployeeService{
 	
 	
 	@Override
-	public int getPayRaisePercent(Employee employee) {
+	public double getPayRaisePercent(Employee employee) {
 		
 		LocalDate currentDate = LocalDate.now();
-		Period period = Period.between(employee.getEntryDate().toLocalDate(), currentDate);
-		int employeeNumOfMonths = period.getYears()*12 + period.getMonths();
+		long employeeNumOfDays = ChronoUnit.DAYS.between(employee.getEntryDate(), currentDate);
 		
 		List<Range> ranges = configProperties.getPayraise().getSmartRanges();	
 		
-		Comparator<Range> compareByTerm = Comparator.comparing(Range::getYearsOfTerm).thenComparing(Range::getMonthsOfTerm);
+		Comparator<Range> compareByTerm = Comparator.comparingDouble(Range::getTermInYears);
 		List<Range> sortedRanges = ranges.stream()
 											.sorted(compareByTerm.reversed())
 											.collect(Collectors.toList());
 		
 		for (Range range : sortedRanges ) {
-			if (employeeNumOfMonths >= (range.getYearsOfTerm()*12 + range.getMonthsOfTerm())) {
+			if (employeeNumOfDays >= range.getTermInYears()*365) {
 				return range.getPercent();
 			}
-		}
+		}	
 		return 0;
 	}
 }

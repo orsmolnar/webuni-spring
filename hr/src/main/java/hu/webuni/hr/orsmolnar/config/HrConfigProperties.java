@@ -40,28 +40,28 @@ public class HrConfigProperties {
 		}
 
 		public static class Range {
-			private int percent;
-			private int yearsOfTerm;
-			private int monthsOfTerm;
+			private double percent;
+			private double termInYears;
+//			private int monthsOfTerm;
 		
-			public int getPercent() {
+			public double getPercent() {
 				return percent;
 			}
-			public void setPercent(int percent) {
+			public void setPercent(double percent) {
 				this.percent = percent;
 			}
-			public int getYearsOfTerm() {
-				return yearsOfTerm;
+			public double getTermInYears() {
+				return termInYears;
 			}
-			public void setYearsOfTerm(int yearsOfTerm) {
-				this.yearsOfTerm = yearsOfTerm;
+			public void setTermInYears(double termInYears) {
+				this.termInYears = termInYears;
 			}
-			public int getMonthsOfTerm() {
-				return monthsOfTerm;
-			}
-			public void setMonthsOfTerm(int monthsOfTerm) {
-				this.monthsOfTerm = monthsOfTerm;
-			}		
+//			public int getMonthsOfTerm() {
+//				return monthsOfTerm;
+//			}
+//			public void setMonthsOfTerm(int monthsOfTerm) {
+//				this.monthsOfTerm = monthsOfTerm;
+//			}		
 		}
 	}
 }

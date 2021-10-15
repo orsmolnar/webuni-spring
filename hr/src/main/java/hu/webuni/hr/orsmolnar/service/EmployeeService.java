@@ -4,5 +4,7 @@ import hu.webuni.hr.orsmolnar.model.Employee;
 
 public interface EmployeeService {
 
-	public int getPayRaisePercent(Employee employee);
+//	public int getPayRaisePercent(Employee employee);
+	
+	public double getPayRaisePercent(Employee employee);
 }

@@ -1,6 +1,5 @@
 package hu.webuni.hr.orsmolnar.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import hu.webuni.hr.orsmolnar.model.Employee;

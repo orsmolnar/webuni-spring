@@ -1,19 +1,15 @@
 package hu.webuni.hr.orsmolnar;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 
 import hu.webuni.hr.orsmolnar.model.Employee;
-import hu.webuni.hr.orsmolnar.service.DefaultEmployeeService;
-import hu.webuni.hr.orsmolnar.service.EmployeeService;
 import hu.webuni.hr.orsmolnar.service.SalaryService;
-import hu.webuni.hr.orsmolnar.service.SmartEmployeeService;
 
 @SpringBootApplication
 public class HrApplication implements CommandLineRunner{
@@ -23,11 +19,11 @@ public class HrApplication implements CommandLineRunner{
 	
 	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 	
-	Employee employee1 = new Employee((long) 1, "Joe", 1000, LocalDateTime.parse("2010-01-02 09:00", formatter));
-	Employee employee2 = new Employee((long) 2, "Jane", 1000, LocalDateTime.parse("2015-01-02 08:00", formatter));
-	Employee employee3 = new Employee((long) 3, "Mary", 1000, LocalDateTime.parse("2018-06-15 09:15", formatter));
-	Employee employee4 = new Employee((long) 4, "Bob", 1000, LocalDateTime.parse("2020-01-02 09:00", formatter));
-	Employee employee5 = new Employee((long) 5, "Kate", 1000, LocalDateTime.parse("2021-05-01 09:00", formatter));
+	Employee employee1 = new Employee((long) 1, "Joe", 1000, LocalDate.parse("2010-01-02"));
+	Employee employee2 = new Employee((long) 2, "Jane", 1000, LocalDate.parse("2015-01-02"));
+	Employee employee3 = new Employee((long) 3, "Mary", 1000, LocalDate.parse("2018-06-15"));
+	Employee employee4 = new Employee((long) 4, "Bob", 1000, LocalDate.parse("2020-01-02"));
+	Employee employee5 = new Employee((long) 5, "Kate", 1000, LocalDate.parse("2021-05-01"));
 	
 	
 	public static void main(String[] args) {

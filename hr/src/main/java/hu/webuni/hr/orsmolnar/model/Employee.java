@@ -1,15 +1,15 @@
 package hu.webuni.hr.orsmolnar.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class Employee {
 
 	private long id;
 	private String name;
 	private int salary;
-	private LocalDateTime entryDate;
+	private LocalDate entryDate;
 	
-	public Employee(long id, String name, int salary, LocalDateTime entryDate) {
+	public Employee(long id, String name, int salary, LocalDate entryDate) {
 		this.id = id;
 		this.name = name;
 		this.salary = salary;
@@ -34,10 +34,10 @@ public class Employee {
 	public void setSalary(int salary) {
 		this.salary = salary;
 	}
-	public LocalDateTime getEntryDate() {
+	public LocalDate getEntryDate() {
 		return entryDate;
 	}
-	public void setEntryDate(LocalDateTime entryDate) {
+	public void setEntryDate(LocalDate entryDate) {
 		this.entryDate = entryDate;
 	}
 }
