@@ -23,8 +23,7 @@ public class SmartEmployeeService implements EmployeeService{
 	@Override
 	public double getPayRaisePercent(Employee employee) {
 		
-		LocalDate currentDate = LocalDate.now();
-		long employeeNumOfDays = ChronoUnit.DAYS.between(employee.getEntryDate(), currentDate);
+		long employeeNumOfDays = ChronoUnit.DAYS.between(employee.getEntryDate(), LocalDate.now());
 		
 		List<Range> ranges = configProperties.getPayraise().getSmartRanges();	
 		

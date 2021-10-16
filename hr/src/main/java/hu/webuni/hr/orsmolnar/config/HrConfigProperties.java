@@ -42,7 +42,6 @@ public class HrConfigProperties {
 		public static class Range {
 			private double percent;
 			private double termInYears;
-//			private int monthsOfTerm;
 		
 			public double getPercent() {
 				return percent;
@@ -55,13 +54,7 @@ public class HrConfigProperties {
 			}
 			public void setTermInYears(double termInYears) {
 				this.termInYears = termInYears;
-			}
-//			public int getMonthsOfTerm() {
-//				return monthsOfTerm;
-//			}
-//			public void setMonthsOfTerm(int monthsOfTerm) {
-//				this.monthsOfTerm = monthsOfTerm;
-//			}		
+			}		
 		}
 	}
 }
