@@ -13,7 +13,6 @@ public class EmployeeDto {
 	
 	public EmployeeDto(long employeeId, String employeeName, String employeeJobTitle, int employeeSalary,
 			LocalDate employeeEntryDate) {
-		super();
 		this.employeeId = employeeId;
 		this.employeeName = employeeName;
 		this.employeeJobTitle = employeeJobTitle;

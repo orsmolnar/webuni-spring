@@ -24,6 +24,7 @@ import hu.webuni.hr.orsmolnar.dto.EmployeeDto;
 @RequestMapping("/api/employees")
 public class HrController {
 
+	//azért Map és nem List, hogy gyorsabban lehessen kereni adott id-jű employeet pl lekérésnél, módosításnál
 	private Map<Long, EmployeeDto> employeeDtos = new HashMap<>();
 	
 	{
@@ -68,7 +69,7 @@ public class HrController {
 	@PostMapping
 	public EmployeeDto addEmployee(@RequestBody EmployeeDto employeeDto) {
 		employeeDtos.put(employeeDto.getEmployeeId(), employeeDto);
-		return null;
+		return employeeDto;
 	}
 	
 	@PutMapping("/{id}")
