@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,10 +20,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import hu.webuni.hr.orsmolnar.dto.EmployeeDto;
+import hu.webuni.hr.orsmolnar.model.Employee;
+import hu.webuni.hr.orsmolnar.service.EmployeeService;
 
 @RestController
 @RequestMapping("/api/employees")
 public class EmployeeController {
+	
+	@Autowired
+	private EmployeeService employeeService;
 	
 	private Map<Long, EmployeeDto> employeeDtos = new HashMap<>();
 	
@@ -34,10 +40,12 @@ public class EmployeeController {
 		employeeDtos.put(5L, new EmployeeDto(5L, "Mark", "product owner", 1300, LocalDate.parse("2019-09-01")));
 	}
 	
+	
 	@GetMapping
 	public List<EmployeeDto> getAllEmployees() {
 		return new ArrayList<>(employeeDtos.values());	
 	}
+	
 	
 	//az url-ben meg kell adni a paramétert, hogy tudja melyik GET metódust kell meghívnia (az "/api/employees"-re megy a getAllEmployees() is!!  
 	@GetMapping(params = "limit")
@@ -47,6 +55,7 @@ public class EmployeeController {
 			    			  .filter(e -> e.getSalary() > limit)
 			    			  .collect(Collectors.toList());
 	}
+	
 	
 //	//getAllEmployees() és getEmployeesOverSalaryLimit() egy metódusban kezelve, opcionális request paraméterrel
 //	@GetMapping
@@ -58,6 +67,7 @@ public class EmployeeController {
 //										 .collect(Collectors.toList());
 //	} 
 	
+	
 	@GetMapping("/{id}")
 	public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable long id) {
 		EmployeeDto employeeDto = employeeDtos.get(id);
@@ -67,11 +77,19 @@ public class EmployeeController {
 		return ResponseEntity.notFound().build();
 	}
 	
+	
 	@PostMapping
 	public EmployeeDto addEmployee(@RequestBody EmployeeDto employeeDto) {
 		employeeDtos.put(employeeDto.getId(), employeeDto);
 		return employeeDto;
 	}
+	
+	
+	@PostMapping("/salaryRaise")
+	public double getPayRaise(@RequestBody Employee employee) {
+		return employeeService.getPayRaisePercent(employee);	
+	}
+	
 	
 	@PutMapping("/{id}")
 	public ResponseEntity<EmployeeDto> modifyEmployee(@PathVariable long id, @RequestBody EmployeeDto employeeDto) {
@@ -83,6 +101,7 @@ public class EmployeeController {
 		return ResponseEntity.notFound().build();
 	}
 	
+	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<EmployeeDto> deleteEmployee(@PathVariable long id) {
 		EmployeeDto employeeDtoToDelete = employeeDtos.get(id);
@@ -92,4 +111,5 @@ public class EmployeeController {
 		}
 		return ResponseEntity.notFound().build();
 	}
+	
 }
