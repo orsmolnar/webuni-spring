@@ -3,51 +3,50 @@ package hu.webuni.hr.orsmolnar.dto;
 import java.time.LocalDate;
 
 public class EmployeeDto {
-	private long employeeId;
-	private String employeeName;
-	private String employeeJobTitle;
-	private int employeeSalary;
-	private LocalDate employeeEntryDate;
+	private long id;
+	private String name;
+	private String title;
+	private int salary;
+	private LocalDate entryDate;
 	
 	public EmployeeDto() {}
 	
-	public EmployeeDto(long employeeId, String employeeName, String employeeJobTitle, int employeeSalary,
-			LocalDate employeeEntryDate) {
-		this.employeeId = employeeId;
-		this.employeeName = employeeName;
-		this.employeeJobTitle = employeeJobTitle;
-		this.employeeSalary = employeeSalary;
-		this.employeeEntryDate = employeeEntryDate;
+	public EmployeeDto(long id, String name, String title, int salary, LocalDate entryDate) {
+		this.id = id;
+		this.name = name;
+		this.title = title;
+		this.salary = salary;
+		this.entryDate = entryDate;
 	}
 
-	public long getEmployeeId() {
-		return employeeId;
+	public long getId() {
+		return id;
 	}
-	public void setEmployeeId(long employeeId) {
-		this.employeeId = employeeId;
+	public void setId(long id) {
+		this.id = id;
 	}
-	public String getEmployeeName() {
-		return employeeName;
+	public String getName() {
+		return name;
 	}
-	public void setEmployeeName(String employeeName) {
-		this.employeeName = employeeName;
+	public void setName(String name) {
+		this.name = name;
 	}
-	public String getEmployeeJobTitle() {
-		return employeeJobTitle;
+	public String getTitle() {
+		return title;
 	}
-	public void setEmployeeJobTitle(String employeeJobTitle) {
-		this.employeeJobTitle = employeeJobTitle;
+	public void setTitle(String title) {
+		this.title = title;
 	}
-	public int getEmployeeSalary() {
-		return employeeSalary;
+	public int getSalary() {
+		return salary;
 	}
-	public void setEmployeeSalary(int employeeSalary) {
-		this.employeeSalary = employeeSalary;
+	public void setSalary(int salary) {
+		this.salary = salary;
 	}
-	public LocalDate getEmployeeEntryDate() {
-		return employeeEntryDate;
+	public LocalDate getEntryDate() {
+		return entryDate;
 	}
-	public void setEmployeeEntryDate(LocalDate employeeEntryDate) {
-		this.employeeEntryDate = employeeEntryDate;
+	public void setEntryDate(LocalDate entryDate) {
+		this.entryDate = entryDate;
 	}
 }

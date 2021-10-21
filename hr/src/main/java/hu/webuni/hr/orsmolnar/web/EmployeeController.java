@@ -22,15 +22,16 @@ import hu.webuni.hr.orsmolnar.dto.EmployeeDto;
 
 @RestController
 @RequestMapping("/api/employees")
-public class HrController {
-
-	//azért Map és nem List, hogy gyorsabban lehessen kereni adott id-jű employeet pl lekérésnél, módosításnál
+public class EmployeeController {
+	
 	private Map<Long, EmployeeDto> employeeDtos = new HashMap<>();
 	
 	{
-		employeeDtos.put(1L, new EmployeeDto(1L, "Bill", "developer", 1000, LocalDate.parse("2011-05-01")));
+		employeeDtos.put(1L, new EmployeeDto(1L, "Bill", "developer", 1200, LocalDate.parse("2011-05-01")));
 		employeeDtos.put(2L, new EmployeeDto(2L, "Peter", "tester", 1100, LocalDate.parse("2016-05-01")));
-		employeeDtos.put(3L, new EmployeeDto(3L, "Tom", "scrum master", 1200, LocalDate.parse("2018-09-01")));
+		employeeDtos.put(3L, new EmployeeDto(3L, "Tom", "scrum master", 1150, LocalDate.parse("2018-09-01")));
+		employeeDtos.put(4L, new EmployeeDto(4L, "James", "developer", 1200, LocalDate.parse("2021-06-01")));
+		employeeDtos.put(5L, new EmployeeDto(5L, "Mark", "product owner", 1300, LocalDate.parse("2019-09-01")));
 	}
 	
 	@GetMapping
@@ -43,7 +44,7 @@ public class HrController {
 	public List<EmployeeDto> getEmployeesOverSalaryLimit(@RequestParam int limit) {
 		List<EmployeeDto> employeeDtoList = new ArrayList<>(employeeDtos.values());
 		return employeeDtoList.stream()
-			    			  .filter(e -> e.getEmployeeSalary() > limit)
+			    			  .filter(e -> e.getSalary() > limit)
 			    			  .collect(Collectors.toList());
 	}
 	
@@ -68,14 +69,14 @@ public class HrController {
 	
 	@PostMapping
 	public EmployeeDto addEmployee(@RequestBody EmployeeDto employeeDto) {
-		employeeDtos.put(employeeDto.getEmployeeId(), employeeDto);
+		employeeDtos.put(employeeDto.getId(), employeeDto);
 		return employeeDto;
 	}
 	
 	@PutMapping("/{id}")
 	public ResponseEntity<EmployeeDto> modifyEmployee(@PathVariable long id, @RequestBody EmployeeDto employeeDto) {
 		if (employeeDtos.containsKey(id)) {
-			employeeDto.setEmployeeId(id);
+			employeeDto.setId(id);
 			employeeDtos.put(id, employeeDto);
 			return ResponseEntity.ok(employeeDto);
 		}

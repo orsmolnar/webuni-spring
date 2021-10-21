@@ -1,42 +1,59 @@
 package hu.webuni.hr.orsmolnar.dto;
 
+import java.util.List;
+
 public class CompanyDto {
-	private long companyId;
-	private String companyRegNum;
-	private String companyName;
-	private String companyAddress;
+	private long id;
+	private String regNum;
+	private String name;
+	private String address;
+	private List<EmployeeDto> employees;
 	
 	public CompanyDto() {}
 	
-	public CompanyDto(long companyId, String companyRegNum, String companyName, String companyAddress) {
-		this.companyId = companyId;
-		this.companyRegNum = companyRegNum;
-		this.companyName = companyName;
-		this.companyAddress = companyAddress;
+	public CompanyDto(long id, String regNum, String name, String address) {
+		this.id = id;
+		this.regNum = regNum;
+		this.name = name;
+		this.address = address;
+	}
+	
+	public CompanyDto(long id, String regNum, String name, String address, List<EmployeeDto> employees) {
+		this.id = id;
+		this.regNum = regNum;
+		this.name = name;
+		this.address = address;
+		this.employees = employees;
 	}
 
-	public long getCompanyId() {
-		return companyId;
+	public long getId() {
+		return id;
 	}
-	public void setCompanyId(long companyId) {
-		this.companyId = companyId;
+	public void setId(long id) {
+		this.id = id;
 	}
-	public String getCompanyRegNum() {
-		return companyRegNum;
+	public String getRegNum() {
+		return regNum;
 	}
-	public void setCompanyRegNum(String companyRegNum) {
-		this.companyRegNum = companyRegNum;
+	public void setRegNum(String regNum) {
+		this.regNum = regNum;
 	}
-	public String getCompanyName() {
-		return companyName;
+	public String getName() {
+		return name;
 	}
-	public void setCompanyName(String companyName) {
-		this.companyName = companyName;
+	public void setName(String name) {
+		this.name = name;
 	}
-	public String getCompanyAddress() {
-		return companyAddress;
+	public String getAddress() {
+		return address;
 	}
-	public void setCompanyAddress(String companyAddress) {
-		this.companyAddress = companyAddress;
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	public List<EmployeeDto> getEmployees() {
+		return employees;
+	}
+	public void setEmployees(List<EmployeeDto> employees) {
+		this.employees = employees;
 	}
 }
