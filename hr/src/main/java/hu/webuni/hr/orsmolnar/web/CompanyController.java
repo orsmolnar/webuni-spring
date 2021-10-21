@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
@@ -136,14 +137,15 @@ public class CompanyController{
 	public ResponseEntity<CompanyDto> deleteEmployeeInCompany(@PathVariable long cid, @PathVariable long eid) {
 		CompanyDto companyDtoFromDelete = companyDtos.get(cid);
 		if (companyDtoFromDelete != null && companyDtoFromDelete.getEmployees() != null) {
-			List<EmployeeDto> employeeDtoList = companyDtoFromDelete.getEmployees().stream()
-																				 .filter(e -> e.getId()== eid)
-																				 .collect(Collectors.toList());
-			if(!CollectionUtils.isEmpty(employeeDtoList)) {
-				companyDtoFromDelete.getEmployees().remove(employeeDtoList.get(0));
-				return ResponseEntity.ok(companyDtoFromDelete);
+			try {
+			companyDtoFromDelete.getEmployees().remove(companyDtoFromDelete.getEmployees().stream()
+					 														  .filter(e -> e.getId()== eid)
+					 														  .findFirst()
+					 														  .get());
+			} catch (NoSuchElementException e) {
+				return ResponseEntity.notFound().build();
 			}
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.ok(companyDtoFromDelete);
 		}
 		return ResponseEntity.notFound().build();
 	}
