@@ -1,9 +1,27 @@
 package hu.webuni.airport.dto;
 
+import java.util.Objects;
+
 import javax.validation.constraints.Size;
 
 public class AirportDto {
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(iata, id, name);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AirportDto other = (AirportDto) obj;
+		return Objects.equals(iata, other.iata) && id == other.id && Objects.equals(name, other.name);
+	}
 	private long id;
 	
 	@Size(min = 3, max = 20)

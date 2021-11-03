@@ -1,10 +1,14 @@
 package hu.webuni.airport.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,22 +31,24 @@ public class AirportControllerIT {
 		List<AirportDto> airportsBefore = getAllAirports();
 		
 		AirportDto newAirport = new AirportDto(5, "asdasgd", "ASD");
+		
 		createAirport(newAirport);
 		
 		List<AirportDto> airportsAfter = getAllAirports();
 
 		
-		//az utolsó elemet leszámítva uazok az elemek vannak-e benne mint az elsőnek lekérdezettek?
-		assertThat(airportsAfter.subList(0, airportsBefore.size()))
-								.usingRecursiveFieldByFieldElementComparator()
-								.containsExactlyElementsOf(airportsBefore);
+//		//az utolsó elemet leszámítva uazok az elemek vannak-e benne mint az elsőnek lekérdezettek?
+//		assertThat(airportsAfter.subList(0, airportsBefore.size()))
+//								.usingRecursiveFieldByFieldElementComparator()
+//								.containsExactlyElementsOf(airportsBefore);
+//		
+//		assertThat(airportsAfter.get(airportsAfter.size()-1))
+//								.usingRecursiveComparison()
+//								.isEqualTo(newAirport);
 		
-		assertThat(airportsAfter.get(airportsAfter.size()-1))
-								.usingRecursiveComparison()
-								.isEqualTo(newAirport);
-		
-//		assertTrue(airportsAfter.containsAll(airportsBefore));
-//		assertEquals(airportsAfter.removeAll(airportsBefore), newAirport);
+		assertTrue(airportsAfter.containsAll(airportsBefore));
+		airportsAfter.removeAll(airportsBefore);
+		assertEquals(airportsAfter.get(0), newAirport);
 	}
 
 	private void createAirport(AirportDto newAirport) {
@@ -61,7 +67,7 @@ public class AirportControllerIT {
 					 								 .expectStatus().isOk()
 					 								 .expectBodyList(AirportDto.class)
 					 								 .returnResult().getResponseBody();
-		Collections.sort(responseList, (a1, a2) -> Long.compare(a1.getId(), a2.getId()));
+//		Collections.sort(responseList, (a1, a2) -> Long.compare(a1.getId(), a2.getId()));
 		return responseList;
 	}
 }
