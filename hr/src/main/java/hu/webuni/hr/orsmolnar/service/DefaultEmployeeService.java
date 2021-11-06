@@ -7,7 +7,7 @@ import hu.webuni.hr.orsmolnar.config.HrConfigProperties;
 import hu.webuni.hr.orsmolnar.model.Employee;
 
 @Service
-public class DefaultEmployeeService implements EmployeeService{
+public class DefaultEmployeeService extends AbstractEmployeeService {
 
 	@Autowired
 	HrConfigProperties configProperties;

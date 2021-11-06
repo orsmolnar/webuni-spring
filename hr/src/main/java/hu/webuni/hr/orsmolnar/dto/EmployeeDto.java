@@ -1,12 +1,26 @@
 package hu.webuni.hr.orsmolnar.dto;
 
 import java.time.LocalDate;
+import java.util.Objects;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 
 public class EmployeeDto {
+	
 	private long id;
+	
+	@NotNull
 	private String name;
+	
+	@NotNull
 	private String title;
+	
+	@Min(1)
 	private int salary;
+	
+	@Past
 	private LocalDate entryDate;
 	
 	public EmployeeDto() {}
@@ -49,4 +63,41 @@ public class EmployeeDto {
 	public void setEntryDate(LocalDate entryDate) {
 		this.entryDate = entryDate;
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(entryDate, id, name, salary, title);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EmployeeDto other = (EmployeeDto) obj;
+		return Objects.equals(entryDate, other.entryDate) && id == other.id && Objects.equals(name, other.name)
+				&& salary == other.salary && Objects.equals(title, other.title);
+	}
+
+//	@Override
+//	public int hashCode() {
+//		return Objects.hash(id);
+//	}
+//
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (this == obj)
+//			return true;
+//		if (obj == null)
+//			return false;
+//		if (getClass() != obj.getClass())
+//			return false;
+//		EmployeeDto other = (EmployeeDto) obj;
+//		return id == other.id;
+//	}
+	
+	
 }

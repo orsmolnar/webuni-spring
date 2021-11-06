@@ -1,7 +1,7 @@
 package hu.webuni.hr.orsmolnar.service;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
+import java.time.Period;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,7 +14,7 @@ import hu.webuni.hr.orsmolnar.config.HrConfigProperties.Payraise.Range;
 import hu.webuni.hr.orsmolnar.model.Employee;
 
 @Service
-public class SmartEmployeeService implements EmployeeService{
+public class SmartEmployeeService extends AbstractEmployeeService {
 	
 	@Autowired
 	HrConfigProperties configProperties;
@@ -23,17 +23,21 @@ public class SmartEmployeeService implements EmployeeService{
 	@Override
 	public double getPayRaisePercent(Employee employee) {
 		
-		long employeeNumOfDays = ChronoUnit.DAYS.between(employee.getEntryDate(), LocalDate.now());
+//		long employeeNumOfDays = ChronoUnit.DAYS.between(employee.getEntryDate(), LocalDate.now());
 		
+		Period period = Period.between(employee.getEntryDate(), LocalDate.now());
+		int employeeNumOfMonths = period.getYears()*12 + period.getMonths();
+		 
 		List<Range> ranges = configProperties.getPayraise().getSmartRanges();	
 		
-		Comparator<Range> compareByTerm = Comparator.comparingDouble(Range::getTermInYears);
+		Comparator<Range> compareByTerm = Comparator.comparing(Range::getYearsOfTerm)
+													.thenComparing(Range::getMonthsOfTerm);
 		List<Range> sortedRanges = ranges.stream()
-											.sorted(compareByTerm.reversed())
-											.collect(Collectors.toList());
+										  .sorted(compareByTerm.reversed())
+										  .collect(Collectors.toList());
 		
 		for (Range range : sortedRanges ) {
-			if (employeeNumOfDays >= range.getTermInYears()*365) {
+			if (employeeNumOfMonths >= range.getYearsOfTerm()*12 + range.getMonthsOfTerm()) {
 				return range.getPercent();
 			}
 		}	

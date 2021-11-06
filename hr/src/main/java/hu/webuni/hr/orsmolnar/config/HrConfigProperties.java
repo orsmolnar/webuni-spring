@@ -22,13 +22,13 @@ public class HrConfigProperties {
 	}
 	
 	public static class Payraise {
-		private int defaultPercent;
+		private double defaultPercent;
 		private List<Range> smartRanges = new ArrayList<>();
 
-		public int getDefaultPercent() {
+		public double getDefaultPercent() {
 			return defaultPercent;
 		}
-		public void setDefaultPercent(int defaultPercent) {
+		public void setDefaultPercent(double defaultPercent) {
 			this.defaultPercent = defaultPercent;
 		}
 		
@@ -41,7 +41,8 @@ public class HrConfigProperties {
 
 		public static class Range {
 			private double percent;
-			private double termInYears;
+			private int yearsOfTerm;
+			private int monthsOfterm;
 		
 			public double getPercent() {
 				return percent;
@@ -49,12 +50,18 @@ public class HrConfigProperties {
 			public void setPercent(double percent) {
 				this.percent = percent;
 			}
-			public double getTermInYears() {
-				return termInYears;
+			public int getYearsOfTerm() {
+				return yearsOfTerm;
 			}
-			public void setTermInYears(double termInYears) {
-				this.termInYears = termInYears;
-			}		
+			public void setYearsOfTerm(int yearsOfTerm) {
+				this.yearsOfTerm = yearsOfTerm;
+			}	
+			public int getMonthsOfTerm() {
+				return monthsOfterm;
+			}
+			public void setMonthsOfTerm(int monthsOfterm) {
+				this.monthsOfterm = monthsOfterm;
+			}	
 		}
 	}
 }
