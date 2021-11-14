@@ -1,6 +1,7 @@
 package hu.webuni.airport.web;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import javax.validation.Valid;
 
@@ -49,12 +50,8 @@ public class AirportController {
 	
 	  @GetMapping("/{id}") 
 	  public AirportDto getById(@PathVariable long id) {
-		  Airport airport = airportService.findById(id);
-		  if (airport != null) { 
-			  return airportMapper.airportToDto(airport); 
-		  } else { 
-			  throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-		  } 
+		  Airport airport = airportService.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		  return airportMapper.airportToDto(airport); 
 	  }
 	  
 	  @PostMapping 
@@ -65,13 +62,14 @@ public class AirportController {
 	  
 	  @PutMapping("/{id}") 
 	  public AirportDto modifyAirport(@PathVariable long id, @RequestBody @Valid AirportDto airportDto) { 
-		  Airport airport = airportService.findById(id);
-		  if (airport != null) { 
-			  airport = airportService.modify(airport, airportMapper.dtoToAirport(airportDto));
+		  Airport airport = airportMapper.dtoToAirport(getById(id));
+		  airport.setId(id);
+		  try {
+			  AirportDto savedAirportDto = airportMapper.airportToDto(airportService.update(airport));
 			  return airportMapper.airportToDto(airport);  
-		  } else { 
+		  } catch (NoSuchElementException e) {
 			  throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-		  } 
+		  }
 	  }
 
 	  

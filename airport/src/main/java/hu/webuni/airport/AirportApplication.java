@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import hu.webuni.airport.service.AirportService;
 import hu.webuni.airport.service.DefaultDiscountService;
 import hu.webuni.airport.service.DiscountService;
 import hu.webuni.airport.service.PriceService;
@@ -16,6 +17,9 @@ public class AirportApplication implements CommandLineRunner{
 	
 	@Autowired
 	PriceService priceService;
+	
+	@Autowired
+	AirportService airportService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(AirportApplication.class, args);
@@ -23,6 +27,7 @@ public class AirportApplication implements CommandLineRunner{
 
 	@Override
 	public void run(String... args) throws Exception {
+		airportService.createFlight();
 		System.out.println("A végső ár: " + priceService.getFinalPrice(200));
 		System.out.println("A végső ár: " + priceService.getFinalPrice(20000));
 	}

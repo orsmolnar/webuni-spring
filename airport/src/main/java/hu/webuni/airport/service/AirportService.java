@@ -1,58 +1,100 @@
 package hu.webuni.airport.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import hu.webuni.airport.model.Airport;
+import hu.webuni.airport.model.Flight;
+import hu.webuni.airport.repository.AirportRepository;
+import hu.webuni.airport.repository.FlightRepository;
 
 @Service
 public class AirportService {
 
-	private Map<Long, Airport> airports = new HashMap<>();
+//	@PersistenceContext
+//	EntityManager em;
 	
-	{
-		airports.put(1L, new Airport(1, "Ferenc Liszt Airport", "BUD"));
-		airports.put(2L, new Airport(2, "Düsseldorf International Airport", "DUS"));
-		airports.put(3L, new Airport(3, "Vienna International Airport", "VIE"));
+	AirportRepository airportRepository;
+	FlightRepository flightRepository;
+
+	public AirportService(AirportRepository airportRepository, FlightRepository flightRepository) {
+		super();
+		this.airportRepository = airportRepository;
+		this.flightRepository = flightRepository;
 	}
-	
+
+	@Transactional
 	public Airport save(Airport airport) {
-		checkUniqueIata(airport.getIata());
-		airports.put(airport.getId(), airport);
-		return airport;
+		checkUniqueIata(airport.getIata(), null);
+//		em.persist(airport);
+		return airportRepository.save(airport);
 	}
 	
 	public List<Airport> findAll() {
-		return new ArrayList<>(airports.values());
+//		return em.createQuery("SELECT a FROM Airport a", Airport.class).getResultList();
+		return airportRepository.findAll();
 	}
 	
-	public Airport findById(long id) {
-		return airports.get(id);
+	public Optional<Airport> findById(long id) {
+//		return em.find(Airport.class, id);
+		return airportRepository.findById(id);
 	}
 	
+	@Transactional
 	public void delete(long id) {
-		airports.remove(id);
+//		em.remove(findById(id));
+		airportRepository.deleteById(id);
 	}
 
-	public Airport modify(Airport airportToModify, Airport newAirport) {
-		checkUniqueIata(newAirport.getIata());
-		newAirport.setId(airportToModify.getId());
-		airports.replace(newAirport.getId(), newAirport);
-		return newAirport;
+	@Transactional
+	public Airport update(Airport airport) {
+		checkUniqueIata(airport.getIata(), airport.getId());
+//		return em.merge(airport);
+		if(airportRepository.existsById(null)) {
+			return airportRepository.save(airport);
+		} else {
+			throw new NoSuchElementException();
+		}
+
+		
 	}
 	
-	private void checkUniqueIata(String iata) { 
-		  Optional<Airport> airportWithSameIata = airports.values().stream() 
-				  											 .filter(a -> a.getIata().equals(iata)) 
-				  											 .findAny(); 
-		  if(airportWithSameIata.isPresent()) {
-			  throw new NonUniqueIataException(iata);
-		  }
+	private void checkUniqueIata(String iata, Long id) { 
+		
+		boolean forUpdate = id != null;
+		
+		//mivel a getSingleResult Object-tel tér vissza, a createNamedQuery-nek megmondom második paraméterben, h mi lesz az eredmény
+//		TypedQuery<Long> query = em.createNamedQuery(forUpdate ? "Airport.countByIataAndIdNotIn" : "Airport.countByIata", Long.class)
+//					   .setParameter("iata", iata);
+//		if (forUpdate) {
+//			query.setParameter("id", id);
+//		}
+//		Long count = query.getSingleResult();
+		
+		Long count = forUpdate ? airportRepository.countByIataAndIdNot(iata, id) : airportRepository.countByIata(iata);
+		
+		if(count > 0) {
+			throw new NonUniqueIataException(iata);
+		}
 	  }
+	
+	@Transactional
+	public void createFlight() {
+		Flight flight = new Flight();
+		flight.setFlightNumber("asdfasf");
+		flight.setTakeoff(airportRepository.findById(1L).get());
+		flight.setLanding(airportRepository.findById(3L).get());
+		flight.setTakeOffTime(LocalDateTime.of(2021, 4, 10, 10, 0, 0));
+		flightRepository.save(flight);
+	}
 
 }
