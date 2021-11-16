@@ -4,20 +4,22 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
+import javax.validation.constraints.Positive;
 
 public class EmployeeDto {
 	
 	private long id;
 	
-	@NotNull
+	@NotEmpty
 	private String name;
 	
-	@NotNull
+	@NotEmpty
 	private String title;
 	
-	@Min(1)
+	@Positive
 	private int salary;
 	
 	@Past
@@ -32,6 +34,7 @@ public class EmployeeDto {
 		this.salary = salary;
 		this.entryDate = entryDate;
 	}
+
 
 	public long getId() {
 		return id;
@@ -64,40 +67,4 @@ public class EmployeeDto {
 		this.entryDate = entryDate;
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(entryDate, id, name, salary, title);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		EmployeeDto other = (EmployeeDto) obj;
-		return Objects.equals(entryDate, other.entryDate) && id == other.id && Objects.equals(name, other.name)
-				&& salary == other.salary && Objects.equals(title, other.title);
-	}
-
-//	@Override
-//	public int hashCode() {
-//		return Objects.hash(id);
-//	}
-//
-//	@Override
-//	public boolean equals(Object obj) {
-//		if (this == obj)
-//			return true;
-//		if (obj == null)
-//			return false;
-//		if (getClass() != obj.getClass())
-//			return false;
-//		EmployeeDto other = (EmployeeDto) obj;
-//		return id == other.id;
-//	}
-	
-	
 }

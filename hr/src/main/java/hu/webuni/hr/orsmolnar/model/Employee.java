@@ -1,15 +1,29 @@
 package hu.webuni.hr.orsmolnar.model;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+
+@Entity
 public class Employee {
 
+	@Id
+	@GeneratedValue
 	private long id;
+	
 	private String name;
 	private String title;
 	private int salary;
 	private LocalDate entryDate;
 	
+	@ManyToOne
+	private Company company;
+
 	public Employee() {}
 	
 	public Employee(long id, String name, String title, int salary, LocalDate entryDate) {
@@ -50,4 +64,29 @@ public class Employee {
 	public void setEntryDate(LocalDate entryDate) {
 		this.entryDate = entryDate;
 	}
+	public Company getCompany() {
+		return company;
+	}
+	public void setCompany(Company company) {
+		this.company = company;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Employee other = (Employee) obj;
+		return id == other.id;
+	}
+	
+	
 }

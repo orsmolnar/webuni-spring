@@ -1,5 +1,6 @@
 package hu.webuni.hr.orsmolnar.web;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -20,7 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 import hu.webuni.hr.orsmolnar.dto.EmployeeDto;
 import hu.webuni.hr.orsmolnar.mapper.EmployeeMapper;
 import hu.webuni.hr.orsmolnar.model.Employee;
-import hu.webuni.hr.orsmolnar.service.AbstractEmployeeService;
+import hu.webuni.hr.orsmolnar.repository.EmployeeRepository;
 import hu.webuni.hr.orsmolnar.service.EmployeeService;
 
 @RestController
@@ -32,33 +33,56 @@ public class EmployeeController {
 	
 	@Autowired
 	private EmployeeMapper employeeMapper;
+	
+	@Autowired
+	private EmployeeRepository employeeRepository;
 
 		
 	@GetMapping
-	public List<EmployeeDto> getEmployees(@RequestParam(required = false) Integer limit) {
-		return limit == null ? employeeMapper.employeesToDtos(employeeService.findAll())
-							 : employeeMapper.employeesToDtos(employeeService.findAllByLimit(limit));
+	public List<EmployeeDto> getEmployees(@RequestParam(required = false) Integer minSalary) {
+		List<Employee> employees = null;
+		if (minSalary == null) {
+			employees = employeeService.findAll();
+		} else {
+			employees = employeeRepository.findBySalaryGreaterThan(minSalary);
+		}
+		return employeeMapper.employeesToDtos(employees);
 	} 
+	
+//	@GetMapping
+//	public List<EmployeeDto> getEmployeesByTitle(@RequestParam(required = true) String title) {
+//		List<Employee> employees = null;
+//		employees = employeeRepository.findByTitle(title);
+//		return employeeMapper.employeesToDtos(employees);
+//	} 
+//	
+//	@GetMapping
+//	public List<EmployeeDto> getEmployeesByNameStartingWith(@RequestParam(required = true) String name) {
+//		List<Employee> employees = null;
+//		employees = employeeRepository.findByNameStartingWithIgnoreCase(name);
+//		return employeeMapper.employeesToDtos(employees);
+//	} 
+//	
+//	@GetMapping
+//	public List<EmployeeDto> getEmployeesByEntryDate(@RequestParam(required = true) LocalDate from,  @RequestParam(required = true) LocalDate to) {
+//		List<Employee> employees = null;
+//		employees = employeeRepository.findByEntryDateBetween(from, to);
+//		return employeeMapper.employeesToDtos(employees);
+//	} 
 	
 	
 	@GetMapping("/{id}")
 	public EmployeeDto getEmployeeById(@PathVariable long id) {
-		Employee employee = employeeService.findById(id);
-		if (employee != null) {
-			return employeeMapper.employeeToDto(employee); 
-		}
-		throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+		Employee employee = employeeService.findById(id)
+										   .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		return employeeMapper.employeeToDto(employee); 
 	}
 	
 	
 	@PostMapping
-	public EmployeeDto addEmployee(@RequestBody @Valid EmployeeDto employeeDto) {
-		if (employeeService.findById(employeeMapper.dtoToEmployee(employeeDto).getId()) == null) {
-			employeeService.create(employeeMapper.dtoToEmployee(employeeDto));
-			Employee newEmployee = employeeService.findById(employeeMapper.dtoToEmployee(employeeDto).getId());
-			return employeeMapper.employeeToDto(newEmployee);
-		}
-		throw new ResponseStatusException(HttpStatus.CONFLICT);
+	public EmployeeDto createEmployee(@RequestBody @Valid EmployeeDto employeeDto) {
+		return employeeMapper.employeeToDto(
+						employeeService.save(employeeMapper.dtoToEmployee(employeeDto)));
 	}
 	
 	
@@ -70,22 +94,19 @@ public class EmployeeController {
 	
 	@PutMapping("/{id}")
 	public EmployeeDto modifyEmployee(@PathVariable long id, @RequestBody @Valid EmployeeDto employeeDto) {
-		Employee employeeToModify = employeeService.findById(id);
-		if (employeeToModify != null) {
-			employeeService.update(id, employeeMapper.dtoToEmployee(employeeDto));
-			Employee modifiedEmployee = employeeService.findById(employeeMapper.dtoToEmployee(employeeDto).getId());
-			return employeeMapper.employeeToDto(modifiedEmployee);
+		employeeDto.setId(id);
+		Employee updatedEmployee = employeeService.update(employeeMapper.dtoToEmployee(employeeDto));
+		if (updatedEmployee == null ) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+		} else {
+			return employeeMapper.employeeToDto(updatedEmployee);
 		}
-		throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 	}
 	
 	
 	@DeleteMapping("/{id}")
 	public void deleteEmployee(@PathVariable long id) {
-		Employee employeeToDelete = employeeService.findById(id);
-		if (employeeToDelete != null) {
-			employeeService.delete(id);
-		} else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+		employeeService.delete(id);
 	}
 	
 }

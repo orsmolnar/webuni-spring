@@ -1,10 +1,13 @@
 package hu.webuni.hr.orsmolnar.web;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -29,76 +32,88 @@ public class EmployeeControllerIT {
 	  @Test 
 	  void testThatValidNewEmployeeIsCreated() throws Exception {
 	  
-	  EmployeeDto newEmployee = new EmployeeDto(10, "Jonas", "developer", 1500, LocalDate.parse("2021-11-03"));
+	  EmployeeDto newEmployee = new EmployeeDto(0L, "Jonas", "developer", 1500, LocalDate.parse("2021-11-03"));
 	  
 	  List<EmployeeDto> employeesBefore = getAllEmployees();
 	  createEmployee(newEmployee).expectStatus()
 	  							 .isOk(); 
 	  List<EmployeeDto> employeesAfter = getAllEmployees();
 	  
-	  assertTrue(employeesAfter.containsAll(employeesBefore));
-	  employeesAfter.removeAll(employeesBefore);
-	  assertEquals(employeesAfter.get(0), newEmployee);
-	  }
+//    ehhez meg kellene írni az EmployeeDto equals()-ét	  
+//	  assertTrue(employeesAfter.containsAll(employeesBefore));
+//	  employeesAfter.removeAll(employeesBefore);
+//	  assertEquals(employeesAfter.get(0), newEmployee);
 	  
+	  assertThat(employeesAfter.size() == (employeesBefore.size()+1));
+	  assertThat(employeesAfter.get(employeesAfter.size()-1))
+	  						   .usingRecursiveComparison()
+	  						   .ignoringFields("id")
+	  						   .isEqualTo(newEmployee);
 	  
-//	  @Test 
-//	  void testThatValidNewEmployeeWithExistingIdCanNotbeCreated() throws Exception {
-//	  
-//	  EmployeeDto newEmployee = new EmployeeDto(1, "Jonas", "developer", 1500, LocalDate.parse("2021-11-03"));
-//	  
-//	  assertThrows(ResponseStatusException.class, () -> {createEmployee(newEmployee);});
-//	  }
-	  
-	  
-	  @Test 
-	  void testThatInvalidEmployeeIsNotCreated() throws Exception
-	  {
-		  EmployeeDto newEmployee = new EmployeeDto(10, "Jonas", null, 1500, LocalDate.parse("2021-11-03"));
-		  
-		  List<EmployeeDto> employeesBefore = getAllEmployees();
-		  createEmployee(newEmployee).expectStatus()
-		  							 .isBadRequest(); 
-		  List<EmployeeDto> employeesAfter = getAllEmployees();
-		  
-		  assertTrue(employeesAfter.containsAll(employeesBefore));
-		  assertEquals(employeesAfter.size(), employeesBefore.size());
 	  }
 	  
 	  
 	  @Test 
-	  void testThatEmployeeCanBeUpdatedWithValidData() throws Exception
-	  {
-		  EmployeeDto newEmployee = new EmployeeDto(1, "Jonas", "developer", 2000, LocalDate.parse("2021-11-03"));
+	  void testThatInvalidEmployeeIsNotCreated() throws Exception {
+		  EmployeeDto newInvalidEmployee = newInvalidEmployee();
 		  
 		  List<EmployeeDto> employeesBefore = getAllEmployees();
-		  EmployeeDto employeeBefore = getEmployeeById(newEmployee.getId());
-		  modifyEmployee(newEmployee);
-		  EmployeeDto employeeAfter = getEmployeeById(newEmployee.getId());
+		  createEmployee(newInvalidEmployee).expectStatus()
+		  							 		.isBadRequest(); 
 		  List<EmployeeDto> employeesAfter = getAllEmployees();
 		  
-		  assertEquals(employeesAfter.size(), employeesBefore.size());
-		  assertEquals(employeeAfter.getName(), newEmployee.getName());
-		  assertEquals(employeeAfter.getTitle(), newEmployee.getTitle());
-		  assertEquals(employeeAfter.getSalary(), newEmployee.getSalary());
-		  assertEquals(employeeAfter.getEntryDate(), newEmployee.getEntryDate());
-		  assertFalse(employeeAfter.equals(employeeBefore));
+		  assertThat(employeesAfter).hasSameSizeAs(employeesBefore);
+	  }
+	  
+	  private EmployeeDto newInvalidEmployee() {
+		  return new EmployeeDto(0L, "Jonas", "", 1500, LocalDate.parse("2021-11-03"));
 	  }
 	  
 	  
 	  @Test 
-	  void testThatEmployeeCanNotBeUpdatedWithInValidData() throws Exception
-	  {
-		  EmployeeDto newEmployee = new EmployeeDto(1, "Jonas", null, 2000, LocalDate.parse("2021-11-03"));
+	  void testThatEmployeeCanBeUpdatedWithValidData() throws Exception {
+		  EmployeeDto newEmployee = new EmployeeDto(0L, "Jonas", "developer", 2000, LocalDate.parse("2021-11-03"));
 		  
+		  EmployeeDto savedEmployee = createEmployee(newEmployee).expectStatus()
+				  												 .isOk()
+				  												 .expectBody(EmployeeDto.class)
+				  												 .returnResult()
+				  												 .getResponseBody();
 		  List<EmployeeDto> employeesBefore = getAllEmployees();
-		  EmployeeDto employeeBefore = getEmployeeById(newEmployee.getId());
-		  modifyEmployee(newEmployee);
-		  EmployeeDto employeeAfter = getEmployeeById(newEmployee.getId());
+		  savedEmployee.setName("something else");
+		  modifyEmployee(savedEmployee).expectStatus()
+		  							   .isOk();
 		  List<EmployeeDto> employeesAfter = getAllEmployees();
 		  
-		  assertEquals(employeesAfter.size(), employeesBefore.size());
-		  assertTrue(employeeAfter.equals(employeeBefore));
+		  assertThat(employeesAfter).hasSameSizeAs(employeesBefore);
+		  assertThat(employeesAfter.get(employeesAfter.size()-1))
+		  						   .usingRecursiveComparison()
+		  						   .isEqualTo(savedEmployee);
+	  }
+	  
+	  
+	  @Test 
+	  void testThatEmployeeCanNotBeUpdatedWithInValidData() throws Exception {
+		  EmployeeDto newEmployee = new EmployeeDto(0L, "Jonas", "developer", 2000, LocalDate.parse("2021-11-03"));
+		  
+		  EmployeeDto savedEmployee = createEmployee(newEmployee).expectStatus()
+				  												 .isOk()
+				  												 .expectBody(EmployeeDto.class)
+				  												 .returnResult()
+				  												 .getResponseBody();
+		  List<EmployeeDto> employeesBefore = getAllEmployees();
+		  
+		  EmployeeDto invalidEmployee = newInvalidEmployee();
+		  invalidEmployee.setId(savedEmployee.getId());
+		  modifyEmployee(invalidEmployee).expectStatus()
+		  								 .isBadRequest();
+
+		  List<EmployeeDto> employeesAfter = getAllEmployees();
+
+		  assertThat(employeesAfter).hasSameSizeAs(employeesBefore);
+		  assertThat(employeesAfter.get(employeesAfter.size()-1))
+								   .usingRecursiveComparison()
+								   .isEqualTo(savedEmployee);
 	  }
 	  
 	 
@@ -127,19 +142,7 @@ public class EmployeeControllerIT {
 	  													  .expectBodyList(EmployeeDto.class) 
 	  													  .returnResult()
 	  													  .getResponseBody(); 
+	  		Collections.sort(responseList, Comparator.comparing(EmployeeDto::getId));
 	  		return responseList; 
 	  }
-	  
-	  private EmployeeDto getEmployeeById(long id) { 
-		  EmployeeDto employee = webTestClient.get()
-	  										  .uri(BASE_URI + "/" + id) 
-	  										  .exchange() 
-	  										  .expectStatus()
-	  										  .isOk()
-	  										  .expectBody(EmployeeDto.class) 
-	  										  .returnResult()
-	  										  .getResponseBody(); 
-	  	  return employee;
-	  }
-	 
 }

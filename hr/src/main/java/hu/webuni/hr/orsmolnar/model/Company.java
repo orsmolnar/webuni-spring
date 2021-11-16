@@ -1,35 +1,58 @@
 package hu.webuni.hr.orsmolnar.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+
+@Entity
 public class Company {
-	private long id;
+	
+	@Id
+	@GeneratedValue
+	private Long id;
+	
 	private String regNum;
 	private String name;
 	private String address;
+	
+	@OneToMany(mappedBy = "company")
 	private List<Employee> employees;
 	
 	public Company() {}
 	
-	public Company(long id, String regNum, String name, String address) {
+	public Company(Long id, String regNum, String name, String address) {
 		this.id = id;
 		this.regNum = regNum;
 		this.name = name;
 		this.address = address;
 	}
 	
-	public Company(long id, String regNum, String name, String address, List<Employee> employees) {
+	public Company(Long id, String regNum, String name, String address, List<Employee> employees) {
 		this.id = id;
 		this.regNum = regNum;
 		this.name = name;
 		this.address = address;
 		this.employees = employees;
 	}
+	
+	
+	public void addEmployee(Employee employee) {
+		if(this.employees == null) {
+			this.employees = new ArrayList<>();
+		}
+		this.employees.add(employee);
+		employee.setCompany(this);
+	}
+	
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public String getRegNum() {
@@ -56,4 +79,5 @@ public class Company {
 	public void setEmployees(List<Employee> employees) {
 		this.employees = employees;
 	}
+	
 }

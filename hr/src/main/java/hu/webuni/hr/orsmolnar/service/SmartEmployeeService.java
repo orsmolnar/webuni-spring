@@ -43,4 +43,5 @@ public class SmartEmployeeService extends AbstractEmployeeService {
 		}	
 		return 0;
 	}
+
 }

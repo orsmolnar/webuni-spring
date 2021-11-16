@@ -5,58 +5,58 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.EvaluationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import hu.webuni.hr.orsmolnar.dto.EmployeeDto;
 import hu.webuni.hr.orsmolnar.model.Employee;
+import hu.webuni.hr.orsmolnar.repository.EmployeeRepository;
 
 
-@Service
+//ő nem bean csak a gyerekei - abstract, úgyse tud példányosulni
 public abstract class AbstractEmployeeService implements EmployeeService{
 	
-private Map<Long, Employee> employees = new HashMap<>();
-	
-	{
-		employees.put(1L, new Employee(1L, "Bill", "developer", 1200, LocalDate.parse("2011-05-01")));
-		employees.put(2L, new Employee(2L, "Peter", "tester", 1100, LocalDate.parse("2016-05-01")));
-		employees.put(3L, new Employee(3L, "Tom", "scrum master", 1150, LocalDate.parse("2018-09-01")));
-		employees.put(4L, new Employee(4L, "James", "developer", 1200, LocalDate.parse("2021-06-01")));
-		employees.put(5L, new Employee(5L, "Mark", "product owner", 1300, LocalDate.parse("2019-09-01")));
-	}
-	
-	public abstract double getPayRaisePercent(Employee employee);
+	@Autowired
+	EmployeeRepository employeeRepository;
 
 	public List<Employee> findAll() {
-		return new ArrayList<>(employees.values());
+		return employeeRepository.findAll();
 	}
 	
-	public List<Employee> findAllByLimit(int limit) {
-		return employees.values().stream()
-				   				 .filter(e -> e.getSalary() > limit)
-				   				 .collect(Collectors.toList());
+//	public List<Employee> findAllByLimit(int limit) {
+//		return employees.values().stream()
+//				   				 .filter(e -> e.getSalary() > limit)
+//				   				 .collect(Collectors.toList());
+//	}
+
+	public Optional<Employee> findById(long id) {
+		return employeeRepository.findById(id);
 	}
 
-	public Employee findById(long id) {
-		return employees.get(id);
+	@Transactional
+	public Employee save(Employee employee) {
+		return employeeRepository.save(employee);
 	}
 
-	public void create(Employee employee) throws EvaluationException{
-		employees.put(employee.getId(), employee);
+	@Transactional
+	public Employee update(Employee employee) {
+		if (employee.getId() == null || !employeeRepository.existsById(employee.getId())) {
+			return null;
+		}
+		return employeeRepository.save(employee);	
 	}
 
-	public void update(long id, Employee employee){
-			employees.replace(id, employee);	
-	}
-
+	@Transactional
 	public void delete(long id) {
-		employees.remove(id);
-		System.out.println(employees);
-	}
-	
+		employeeRepository.deleteById(id);
+	}	
 	
 	
 }

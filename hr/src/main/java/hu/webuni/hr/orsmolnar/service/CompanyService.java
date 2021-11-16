@@ -6,73 +6,88 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import hu.webuni.hr.orsmolnar.model.Company;
 import hu.webuni.hr.orsmolnar.model.Employee;
+import hu.webuni.hr.orsmolnar.repository.CompanyRepository;
+import hu.webuni.hr.orsmolnar.repository.EmployeeRepository;
 
 
 @Service
 public class CompanyService {
 	
-	private List<Employee> employeesAtFirstCompany = new ArrayList<>();
-	{
-		employeesAtFirstCompany.add(new Employee(1L, "Bill", "developer", 1200, LocalDate.parse("2011-05-01")));
-		employeesAtFirstCompany.add(new Employee(2L, "Peter", "tester", 1100, LocalDate.parse("2016-05-01")));
-	}
-	
-	private Map<Long, Company> companies = new HashMap<>();
-	{
-		companies.put(1L, new Company(1L, "01-01-123456", "myFirstCompany", "address1", employeesAtFirstCompany));
-		companies.put(2L, new Company(2L, "02-02-123456", "mySecondCompany", "address2"));
-		companies.put(3L, new Company(3L, "03-03-123456", "myThirdCompany", "address3"));
-	}	
 
+	@Autowired
+	CompanyRepository companyRepository;
+	
+	@Autowired
+	EmployeeRepository employeeRepository;
 	
 	public List<Company> findAll() {
-		return new ArrayList<>(companies.values());
+		return companyRepository.findAll();
 	}
 	
-	public Company findById(long id) {
-		return companies.get(id);
+	public Optional<Company> findById(long id) {
+		return companyRepository.findById(id);
 	}
 	
+	@Transactional
 	public Company save(Company company) {
-		companies.put(company.getId(), company);
-		return company;
-	}
-	
-	public Company addEmployee(Company company, Employee employee) {
-		company.getEmployees().add(employee);
-		return company;
+		return companyRepository.save(company);
 	}
 
-	public Company modify(Company companyToModify, Company newCompany) {
-		newCompany.setId(companyToModify.getId());
-		companies.replace(newCompany.getId(), newCompany);
-		return newCompany;
+	@Transactional
+	public Company update(Company company) {
+		if(company.getId() == null || !companyRepository.existsById(company.getId())) {
+			return null;
+		}
+		return companyRepository.save(company);
 	}
-	
-	public Company changeEmployees(Company company, List<Employee> newEmployees) {
-		company.setEmployees(newEmployees);
-		return company;
-	}
-	
+
+	@Transactional
 	public void delete(long id) {
-		companies.remove(id);
+		companyRepository.deleteById(id);
 	}
 
-	public void deleteEmployees(Company company) {
-		company.setEmployees(null);
+	
+	@Transactional
+	public Company addEmployee(long cid, Employee employee) {
+		Company company = companyRepository.findById(cid).get();
+		company.addEmployee(employee);
+		employeeRepository.save(employee);
+		return company;
 	}
-
-	public void deleteEmployee(Company companyFromDelete, long eid) throws NoSuchElementException {
-		companyFromDelete.getEmployees().remove(companyFromDelete.getEmployees().stream()
-				  												 .filter(e -> e.getId()== eid)
-				  												 .findFirst()
-				  												 .orElseThrow(NoSuchElementException::new));
+	
+	//rárakom a @Transactional-t -> a company és employee is managelt állapotú lesz, nem kell kézzel csatolgatni és mentegetni
+	@Transactional
+	public Company deleteEmployee(long cid, long eid) {
+		Company company = companyRepository.findById(cid).get();
+		Employee employee = employeeRepository.findById(eid).get();
+		employee.setCompany(null);
+		company.getEmployees().remove(employee);
+		//a @Transactional miatt nem kell!
+		//employeeRepository.save(employee);
+		return company;
+	}
+	
+	//transactional lesz később!!
+	public Company replaceEmployees(long cid, List<Employee> employees) {
+		Company company = companyRepository.findById(cid).get();
+		company.getEmployees().forEach(e -> {
+			e.setCompany(null);
+		});
+		company.getEmployees().clear();
 		
+		employees.forEach(e -> {
+			employeeRepository.save(e);
+			company.addEmployee(e);
+		});
+		return company;
 	}
 	
 }
