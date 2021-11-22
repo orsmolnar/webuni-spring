@@ -14,22 +14,24 @@ public class Employee {
 
 	@Id
 	@GeneratedValue
-	private long id;
+	private Long id;
 	
 	private String name;
-	private String title;
+//	private String title;
 	private int salary;
 	private LocalDate entryDate;
+	
+	@ManyToOne
+	private Position position;
 	
 	@ManyToOne
 	private Company company;
 
 	public Employee() {}
 	
-	public Employee(long id, String name, String title, int salary, LocalDate entryDate) {
+	public Employee(Long id, String name, int salary, LocalDate entryDate) {
 		this.id = id;
 		this.name = name;
-		this.title = title;
 		this.salary = salary;
 		this.entryDate = entryDate;
 	}
@@ -45,12 +47,6 @@ public class Employee {
 	}
 	public void setName(String name) {
 		this.name = name;
-	}
-	public String getTitle() {
-		return title;
-	}
-	public void setTitle(String title) {
-		this.title = title;
 	}
 	public int getSalary() {
 		return salary;
@@ -69,6 +65,12 @@ public class Employee {
 	}
 	public void setCompany(Company company) {
 		this.company = company;
+	}
+	public Position getPosition() {
+		return position;
+	}
+	public void setPosition(Position position) {
+		this.position = position;
 	}
 
 	@Override

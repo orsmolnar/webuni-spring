@@ -25,6 +25,9 @@ public class EmployeeDto {
 	@Past
 	private LocalDate entryDate;
 	
+	private CompanyDto company;
+	
+	
 	public EmployeeDto() {}
 	
 	public EmployeeDto(long id, String name, String title, int salary, LocalDate entryDate) {
@@ -66,5 +69,12 @@ public class EmployeeDto {
 	public void setEntryDate(LocalDate entryDate) {
 		this.entryDate = entryDate;
 	}
+	public CompanyDto getCompany() {
+		return company;
+	}
+	public void setCompany(CompanyDto company) {
+		this.company = company;
+	}
+
 
 }

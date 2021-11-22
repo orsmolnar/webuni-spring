@@ -19,7 +19,9 @@ import hu.webuni.hr.orsmolnar.dto.CompanyDto;
 import hu.webuni.hr.orsmolnar.dto.EmployeeDto;
 import hu.webuni.hr.orsmolnar.mapper.CompanyMapper;
 import hu.webuni.hr.orsmolnar.mapper.EmployeeMapper;
+import hu.webuni.hr.orsmolnar.model.AverageSalaryByPosition;
 import hu.webuni.hr.orsmolnar.model.Company;
+import hu.webuni.hr.orsmolnar.repository.CompanyRepository;
 import hu.webuni.hr.orsmolnar.service.CompanyService;
 
 
@@ -30,20 +32,27 @@ public class CompanyController{
 	private CompanyService companyService;
 	private CompanyMapper companyMapper;
 	private EmployeeMapper employeeMapper;
+	private CompanyRepository companyRepository;
 	
-	public CompanyController(CompanyService companyService, CompanyMapper companyMapper, EmployeeMapper employeeMapper) {
+	public CompanyController(CompanyService companyService, CompanyMapper companyMapper, 
+							 EmployeeMapper employeeMapper, CompanyRepository companyRepository) {
 		super();
 		this.companyService = companyService;
 		this.companyMapper = companyMapper;
 		this.employeeMapper = employeeMapper;
+		this.companyRepository = companyRepository;
 	}
 
 
 	@GetMapping
 	public List<CompanyDto> getAllCompanies(@RequestParam(required = false) boolean full) {
 		List<Company> companies = companyService.findAll();
-		return full ? companyMapper.companiesToDtos(companies) 
-						: companyMapper.companiesToDtosWithoutEmployees(companies);
+		return mapCompanies(companies, full);
+	}
+	
+	private List<CompanyDto> mapCompanies(List<Company> allCompanies, boolean full) {
+		return full ? companyMapper.companiesToDtos(allCompanies) 
+				: companyMapper.companiesToDtosWithoutEmployees(allCompanies);
 	}
 	
 	
@@ -104,4 +113,36 @@ public class CompanyController{
 	public CompanyDto deleteAllEmployeesInCompany(@PathVariable long cid) {
 		return changeAllEmployeesInCompany(cid, null);
 	}
+	
+	
+	@GetMapping(params = "aboveSalary")
+	public List<CompanyDto> getCompaniesAboveSalary(@RequestParam int aboveSalary, 
+													@RequestParam(required = false) boolean full) {
+		List<Company> companies = companyRepository.findByEmployeeWithSalaryHigherThan(aboveSalary);
+		return mapCompanies(companies, full);
+	}
+	
+	@GetMapping(params = "aboveEmployeeNumber")
+	public List<CompanyDto> getCompaniesAboveEmployeeNumber(@RequestParam int aboveEmployeeNumber, 
+															@RequestParam(required = false) boolean full) {
+		List<Company> companies = companyRepository.findByEmployeeCountHigherThan(aboveEmployeeNumber);
+		return mapCompanies(companies, full);
+	}
+	
+	@GetMapping("/{id}/salaryStats")
+	public List<AverageSalaryByPosition> getSalaryStatsById(@PathVariable long id, 
+															@RequestParam(required = false) boolean full) {
+		return companyRepository.findAverageSalariesByPosition(id);
+	}
 }
+
+
+
+
+
+
+
+
+
+
+

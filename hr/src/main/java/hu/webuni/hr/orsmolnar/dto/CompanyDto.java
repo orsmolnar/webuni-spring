@@ -1,5 +1,6 @@
 package hu.webuni.hr.orsmolnar.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CompanyDto {
@@ -7,7 +8,8 @@ public class CompanyDto {
 	private String regNum;
 	private String name;
 	private String address;
-	private List<EmployeeDto> employees;
+	
+	private List<EmployeeDto> employees = new ArrayList<>();
 	
 	public CompanyDto() {}
 	

@@ -17,11 +17,11 @@ public class HrTLController {
 	
 	private List<Employee> allEmployees = new ArrayList<>();
 	
-	{
-		allEmployees.add(new Employee(1L, "Bill", "developer", 1000, LocalDate.parse("2011-05-01")));
-		allEmployees.add(new Employee(2L, "Peter", "tester", 1000, LocalDate.parse("2016-05-01")));
-		allEmployees.add(new Employee(3L, "Tom", "scrum master", 1000, LocalDate.parse("2018-09-01")));
-	}
+//	{
+//		allEmployees.add(new Employee(1L, "Bill", "developer", 1000, LocalDate.parse("2011-05-01")));
+//		allEmployees.add(new Employee(2L, "Peter", "tester", 1000, LocalDate.parse("2016-05-01")));
+//		allEmployees.add(new Employee(3L, "Tom", "scrum master", 1000, LocalDate.parse("2018-09-01")));
+//	}
 	
 	@GetMapping("/")
 	public String home() {

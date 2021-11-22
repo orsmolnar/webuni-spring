@@ -34,6 +34,7 @@ public interface CompanyMapper {
 	//Ezeket áthoztuk az employeeMapperből, mert a company-nak is vannak employee-jai, a mapping kapcsolatokat itt is meg kell adni
 //	ezt akkor kellene, ha az entity és a dto mezői nem egyeznek
 //	@Mapping(target = "id", source = "employeeId")
+	@Mapping(target = "title", source = "position.name")
 	EmployeeDto employeeToDto(Employee employee);
 
 //	ezt akkor kellene, ha az entity és a dto mezői nem egyeznek
